@@ -75,7 +75,6 @@ class ExpenseController extends Controller
         return redirect()->back()->with('notification', $notification);
     }
 
-
     public function update(Request $request, Expense $expense)
     {
         if(\Auth::user()->can('Edit Expense'))
@@ -130,10 +129,11 @@ class ExpenseController extends Controller
         );
         return redirect()->back()->with('notification', $notification);
     }
-    public function export(Request $request)
-    {
-        $name = 'Expense_' . date('Y-m-d i:h:s');
-        $data = Excel::download(new ExpenseExport(), $name . '.xlsx');
-        return $data;
-    }
+
+    // public function export(Request $request)
+    // {
+    //     $name = 'Expense_' . date('Y-m-d i:h:s');
+    //     $data = Excel::download(new ExpenseExport(), $name . '.xlsx');
+    //     return $data;
+    // }
 }

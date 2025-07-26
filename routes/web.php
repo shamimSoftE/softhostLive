@@ -204,8 +204,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin', 'checkstatus']
         Route::get('expense', [ExpenseController::class, 'index']);
         Route::post('expense_create', [ExpenseController::class, 'store']);
         Route::post('expense_delete/{id}', [ExpenseController::class, 'destroy']);
-        Route::get('/expense-filter', [ExpenseController::class, 'filter'])->name('exp.filter');
-        Route::get('export/expense', [ExpenseController::class, 'export'])->name('expense.export');
+        
+        // Route::get('/expense-filter', [ExpenseController::class, 'filter'])->name('exp.filter');
+        // Route::get('export/expense', [ExpenseController::class, 'export'])->name('expense.export');
 
     // Admin Profile Routs
     Route::get('/profile/edit', 'Admin\ProfileController@editProfile')->name('admin.editProfile');
