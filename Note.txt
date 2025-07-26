@@ -1,0 +1,2 @@
+-------- 26 July 2025- ---------------
+ALTER TABLE `expenses` CHANGE `account_id` `account_id` INT NULL DEFAULT NULL, CHANGE `payee_id` `payee_id` INT NULL DEFAULT NULL, CHANGE `payment_type_id` `payment_type_id` INT NULL DEFAULT NULL;
