@@ -203,6 +203,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin', 'checkstatus']
         
         Route::get('expense', [ExpenseController::class, 'index']);
         Route::post('expense_create', [ExpenseController::class, 'store']);
+        Route::get('expense_edit', [ExpenseController::class, 'edit']);
+        Route::post('expense_update', [ExpenseController::class, 'update']);
         Route::post('expense_delete/{id}', [ExpenseController::class, 'destroy']);
         
         // Route::get('/expense-filter', [ExpenseController::class, 'filter'])->name('exp.filter');

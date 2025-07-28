@@ -76,7 +76,7 @@
                                                 {{ $item->description }}
                                             </td>
                                             <td>
-                                                <a href="#" class="btn btn-info btn-sm">
+                                                <a href="javascript:void(0)" onclick="editExpense({{ $item->id }})" class="btn btn-info btn-sm">
                                                     <i class="fas fa-pencil-alt"></i>
                                                     {{ __('Edit') }}
                                                 </a>
@@ -112,7 +112,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form class="blogCateForm" action="{{ url('admin/expense_create') }}" method="POST" >
+                    <form class="blogCateForm" action="{{ url('admin/expense_create') }}" method="POST">
                             @csrf
                         <div class="modal-body">
                             <div class="row">
@@ -162,7 +162,87 @@
 
 
 
+        <!-- edit -->
+        <div class="modal fade" id="expenseEdit" data-backdrop="static" data-keyboard="false" tabindex="-1"
+            aria-labelledby="expenseEditLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="expenseEditLabel">Expense Update</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form class="blogCateForm" action="{{ url('admin/expense_update') }}" method="POST" >
+                        @csrf
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-md-12 mb-0">
+                                    <label for="title" class="form-label" style="margin: 0;"> Ref#<sup class="text-danger">*</sup>
+                                    </label>
+                                    <input type="text" class="form-control" required name="referal_id" value="{{ old('referal_id') }}" placeholder="Ref...">
+                                </div>
 
+                                <input type="hidden" name="id" >
 
+                                <div class="form-group col-md-6 mb-0">
+                                    <label for="title" class="form-label" style="margin: 0;"> Amount<sup class="text-danger">*</sup>
+                                    </label>
+                                    <input type="number" step="any" class="form-control" required name="amount" value="{{ old('amount') }}" placeholder="">
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    <label for="title" class="form-label" style="margin: 0;"> Date<sup class="text-danger">*</sup>
+                                    </label>
+                                    <input type="date" class="form-control" required name="date" value="{{ date('Y-m-d') }}" >
+                                </div>
+
+                                <div class="form-group col-md-12 mb-0">
+                                    <label for="title" class="form-label mb-0">Category<sup  class="text-danger">*</sup></label>
+                                    <select class="select2 form-control subcate @error('expense_category_id') is-invalid @enderror" name="expense_category_id" required>
+                                        <option value=""> select</option>
+                                        @foreach ($categories as $cate)
+                                            <option value="{{ $cate->id }}">{{ $cate->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-12 mb-0">
+                                    <label for="title" class="form-label" style="margin: 0;">Note</label>
+                                    <input type="text" class="form-control" name="description" value="{{ old('description') }}" placeholder="Write your comment">
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </section>
+
+
+    <script>
+        function editExpense(id)
+        {
+            $.ajax({
+                url:'/admin/expense_edit',
+                type:'get',
+                data:{id:id},
+                success:function(res) {
+                    $("#expenseEdit [name=referal_id]").val(res.referal_id);
+                    $("#expenseEdit [name=amount]").val(res.amount);
+                    $("#expenseEdit [name=date]").val(res.date);
+                    $("#expenseEdit [name=description]").val(res.description);
+                    $("#expenseEdit [name=id]").val(res.id);
+                    $("#expenseEdit [name=expense_category_id]").trigger('change').val(res.expense_category_id);
+
+                    $("#expenseEdit").modal('show');
+                    
+                }
+            });
+        }
+    </script>
 @endsection

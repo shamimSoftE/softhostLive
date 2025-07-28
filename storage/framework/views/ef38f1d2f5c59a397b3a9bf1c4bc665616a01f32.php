@@ -75,7 +75,7 @@
 
                                             </td>
                                             <td>
-                                                <a href="#" class="btn btn-info btn-sm">
+                                                <a href="javascript:void(0)" onclick="editExpense(<?php echo e($item->id); ?>)" class="btn btn-info btn-sm">
                                                     <i class="fas fa-pencil-alt"></i>
                                                     <?php echo e(__('Edit')); ?>
 
@@ -113,7 +113,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form class="blogCateForm" action="<?php echo e(url('admin/expense_create')); ?>" method="POST" >
+                    <form class="blogCateForm" action="<?php echo e(url('admin/expense_create')); ?>" method="POST">
                             <?php echo csrf_field(); ?>
                         <div class="modal-body">
                             <div class="row">
@@ -170,9 +170,96 @@ unset($__errorArgs, $__bag); ?>" name="expense_category_id" required>
 
 
 
+        <!-- edit -->
+        <div class="modal fade" id="expenseEdit" data-backdrop="static" data-keyboard="false" tabindex="-1"
+            aria-labelledby="expenseEditLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="expenseEditLabel">Expense Update</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form class="blogCateForm" action="<?php echo e(url('admin/expense_update')); ?>" method="POST" >
+                        <?php echo csrf_field(); ?>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-md-12 mb-0">
+                                    <label for="title" class="form-label" style="margin: 0;"> Ref#<sup class="text-danger">*</sup>
+                                    </label>
+                                    <input type="text" class="form-control" required name="referal_id" value="<?php echo e(old('referal_id')); ?>" placeholder="Ref...">
+                                </div>
 
+                                <input type="hidden" name="id" >
 
+                                <div class="form-group col-md-6 mb-0">
+                                    <label for="title" class="form-label" style="margin: 0;"> Amount<sup class="text-danger">*</sup>
+                                    </label>
+                                    <input type="number" step="any" class="form-control" required name="amount" value="<?php echo e(old('amount')); ?>" placeholder="">
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    <label for="title" class="form-label" style="margin: 0;"> Date<sup class="text-danger">*</sup>
+                                    </label>
+                                    <input type="date" class="form-control" required name="date" value="<?php echo e(date('Y-m-d')); ?>" >
+                                </div>
+
+                                <div class="form-group col-md-12 mb-0">
+                                    <label for="title" class="form-label mb-0">Category<sup  class="text-danger">*</sup></label>
+                                    <select class="select2 form-control subcate <?php $__errorArgs = ['expense_category_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>" name="expense_category_id" required>
+                                        <option value=""> select</option>
+                                        <?php $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($cate->id); ?>"><?php echo e($cate->name); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-12 mb-0">
+                                    <label for="title" class="form-label" style="margin: 0;">Note</label>
+                                    <input type="text" class="form-control" name="description" value="<?php echo e(old('description')); ?>" placeholder="Write your comment">
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </section>
+
+
+    <script>
+        function editExpense(id)
+        {
+            $.ajax({
+                url:'/admin/expense_edit',
+                type:'get',
+                data:{id:id},
+                success:function(res) {
+                    $("#expenseEdit [name=referal_id]").val(res.referal_id);
+                    $("#expenseEdit [name=amount]").val(res.amount);
+                    $("#expenseEdit [name=date]").val(res.date);
+                    $("#expenseEdit [name=description]").val(res.description);
+                    $("#expenseEdit [name=id]").val(res.id);
+                    $("#expenseEdit [name=expense_category_id]").trigger('change').val(res.expense_category_id);
+
+                    $("#expenseEdit").modal('show');
+                    
+                }
+            });
+        }
+    </script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('admin.layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH E:\laragon\www\WEB-APP\softhostLive\resources\views/admin/account/expense.blade.php ENDPATH**/ ?>

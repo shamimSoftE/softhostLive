@@ -75,49 +75,33 @@ class ExpenseController extends Controller
         return redirect()->back()->with('notification', $notification);
     }
 
+    public function edit(Request $request) {
+        $expense = Expense::with('expenseCategory')->find($request->id);
+        return response()->json($expense);
+    }
+
     public function update(Request $request, Expense $expense)
     {
-        if(\Auth::user()->can('Edit Expense'))
+       $validator = Validator::make( $request->all(),[
+            'amount' => 'required',
+            'date' => 'required',
+            'expense_category_id' => 'required',
+        ]);
+        if($validator->fails())
         {
-            if($expense->created_by == \Auth::user()->creatorId())
-            {
-                $validator = \Validator::make(
-                    $request->all(), [
-                                       'account_id' => 'required',
-                                       'amount' => 'required',
-                                       'date' => 'required',
-                                       'expense_category_id' => 'required',
-                                       'payee_id' => 'required',
-                                   ]
-                );
-                if($validator->fails())
-                {
-                    $messages = $validator->getMessageBag();
-
-                    return redirect()->back()->with('error', $messages->first());
-                }
-
-                $expense->account_id          = $request->account_id;
-                $expense->amount              = $request->amount;
-                $expense->date                = $request->date;
-                $expense->expense_category_id = $request->expense_category_id;
-                $expense->payee_id            = $request->payee_id;
-                $expense->payment_type_id     = $request->payment_type_id;
-                $expense->referal_id          = $request->referal_id;
-                $expense->description         = $request->description;
-                $expense->save();
-
-                return redirect()->route('expense.index')->with('success', __('Expense successfully updated.'));
-            }
-            else
-            {
-                return redirect()->back()->with('error', __('Permission denied.'));
-            }
+            $notification = array(
+                'messege' => $validator->errors()->first(),
+                'alert' => 'error'
+            );
+            return redirect()->back()->with('notification', $notification);
         }
-        else
-        {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
+
+        Expense::find($request->id)->update($request->all());
+        $notification = array(
+            'messege' => 'Expense successfully Updated!',
+            'alert' => 'success'
+        );
+        return redirect()->back()->with('notification', $notification);
     }
 
     public function destroy($id)
