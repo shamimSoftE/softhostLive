@@ -1168,11 +1168,12 @@ $admin = Auth::guard('admin')->user();
                 
                     <li class="nav-item 
                         <?php if(request()->path() == 'admin/expense'): ?> menu-open 
-                        
+                        <?php elseif(request()->path() == 'admin/account_category'): ?> menu-open
                         <?php endif; ?>
                             ">
                         <a href="#" class="nav-link
                         <?php if(request()->path() == 'admin/expense'): ?> active
+                        <?php elseif(request()->path() == 'admin/account_category'): ?> active
                         <?php endif; ?>
                         ">
                             <i class="nav-icon fas fa-clipboard"></i>
@@ -1192,6 +1193,7 @@ $admin = Auth::guard('admin')->user();
                                     <p><?php echo e(__('Expense')); ?></p>
                                 </a>
                             </li>
+
                             <li class="nav-item">
                                 <a href="#" class="nav-link
                             <?php if(request()->path() == 'admin/income'): ?> active <?php endif; ?>
@@ -1200,6 +1202,16 @@ $admin = Auth::guard('admin')->user();
                                     <p><?php echo e(__('Income')); ?></p>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?php echo e(url('admin/account_category')); ?>" class="nav-link
+                            <?php if(request()->path() == 'admin/account_category'): ?> active <?php endif; ?>
+                            ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p><?php echo e(__('Category')); ?></p>
+                                </a>
+                            </li>
+
                         </ul>
                     </li>
              

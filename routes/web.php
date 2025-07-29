@@ -4,6 +4,7 @@ use App\Models\Permalink;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\subCategoryController;
 
 /*
@@ -206,6 +207,15 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth:admin', 'checkstatus']
         Route::get('expense_edit', [ExpenseController::class, 'edit']);
         Route::post('expense_update', [ExpenseController::class, 'update']);
         Route::post('expense_delete/{id}', [ExpenseController::class, 'destroy']);
+        
+        // account category
+        Route::get('account_category', [ExpenseTypeController::class, 'index']);
+        Route::get('account_category_getList', [ExpenseTypeController::class, 'categoryGet']);
+        Route::get('account_category_edit', [ExpenseTypeController::class, 'edit']);
+        Route::post('account_category_store', [ExpenseTypeController::class, 'store']);
+        Route::post('account_category_update', [ExpenseTypeController::class, 'update']);
+        Route::post('account_category_destroy', [ExpenseTypeController::class, 'destroy']);
+
         
         // Route::get('/expense-filter', [ExpenseController::class, 'filter'])->name('exp.filter');
         // Route::get('export/expense', [ExpenseController::class, 'export'])->name('expense.export');

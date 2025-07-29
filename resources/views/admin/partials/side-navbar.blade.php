@@ -1152,11 +1152,12 @@ $admin = Auth::guard('admin')->user();
                 
                     <li class="nav-item 
                         @if(request()->path() == 'admin/expense') menu-open 
-                        {{-- @elseif(request()->path() == 'admin/subscriber/add') menu-open --}}
+                        @elseif(request()->path() == 'admin/account_category') menu-open
                         @endif
                             ">
                         <a href="#" class="nav-link
                         @if(request()->path() == 'admin/expense') active
+                        @elseif(request()->path() == 'admin/account_category') active
                         @endif
                         ">
                             <i class="nav-icon fas fa-clipboard"></i>
@@ -1175,6 +1176,7 @@ $admin = Auth::guard('admin')->user();
                                     <p>{{ __('Expense') }}</p>
                                 </a>
                             </li>
+
                             <li class="nav-item">
                                 <a href="#" class="nav-link
                             @if(request()->path() == 'admin/income') active @endif
@@ -1183,6 +1185,16 @@ $admin = Auth::guard('admin')->user();
                                     <p>{{ __('Income') }}</p>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="{{ url('admin/account_category') }}" class="nav-link
+                            @if(request()->path() == 'admin/account_category') active @endif
+                            ">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>{{ __('Category') }}</p>
+                                </a>
+                            </li>
+
                         </ul>
                     </li>
              

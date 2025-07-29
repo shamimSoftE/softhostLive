@@ -3,145 +3,88 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExpenseType;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ExpenseTypeController extends Controller
 {
     public function index()
     {
-        if(\Auth::user()->can('Manage Expense Type'))
-        {
-            $expensetypes = ExpenseType::where('created_by', '=', \Auth::user()->creatorId())->get();
-
-            return view('expensetype.index', compact('expensetypes'));
-        }
-        else
-        {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
+        $expensetypes = ExpenseType::where('created_by', '=', Auth::user()->id)->get();
+        return view('admin.account.account_category', compact('expensetypes'));
     }
 
-    public function create()
+    public function categoryGet()
     {
-        if(\Auth::user()->can('Create Expense Type'))
-        {
-            return view('expensetype.create');
-        }
-        else
-        {
-            return response()->json(['error' => __('Permission denied.')], 401);
-        }
+        $categories = ExpenseType::latest()->get();
+        return response()->json(['categories' => $categories]);
     }
 
     public function store(Request $request)
     {
-        if(\Auth::user()->can('Create Expense Type'))
-        {
+        $validator = Validator::make( $request->all(), [
+            'name' => 'required',
+        ]);
 
-            $validator = \Validator::make(
-                $request->all(), [
-                                   'name' => 'required',
-                               ]
+        if($validator->fails())
+        {
+            $notification = array(
+                'messege' => $validator->errors()->first(),
+                'alert' => 'error'
             );
-            if($validator->fails())
-            {
-                $messages = $validator->getMessageBag();
-
-                return redirect()->back()->with('error', $messages->first());
-            }
-
-            $expensetype             = new ExpenseType();
-            $expensetype->name       = $request->name;
-            $expensetype->created_by = \Auth::user()->creatorId();
-            $expensetype->save();
-
-            return redirect()->route('expensetype.index')->with('success', __('ExpenseType  successfully created.'));
+            return redirect()->back()->with('notification', $notification);
         }
-        else
-        {
-            return redirect()->back()->with('error', __('Permission denied.'));
+
+        $expensetype             = new ExpenseType();
+        $expensetype->name       = $request->name;
+        $expensetype->created_by = Auth::user()->id;
+        $expensetype->save();
+
+        $notification = array(
+            'messege' => 'Account category successfully created!',
+            'alert' => 'success'
+        );
+        return redirect()->back()->with('notification', $notification);
+    }
+
+    public function edit(Request $request)
+    {
+        try {
+           $category = ExpenseType::find($request->id);
+            return response()->json(['category' => $category]);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()]);
         }
     }
 
-    public function show(ExpenseType $expensetype)
+    public function update(Request $request)
     {
-        return redirect()->route('expensetype.index');
+        $validator = Validator::make( $request->all(), [
+            'name' => 'required',
+        ]);
+
+        if($validator->fails())
+        {
+            $notification = array(
+                'messege' => $validator->errors()->first(),
+                'alert' => 'error'
+            );
+            return redirect()->back()->with('notification', $notification);
+        }
+
+        ExpenseType::find($request->id)->update($request->all());
+
+        $notification = array(
+            'messege' => 'Account category successfully updated!',
+            'alert' => 'success'
+        );
+        return redirect()->back()->with('notification', $notification);
     }
 
-    public function edit(ExpenseType $expensetype)
+    public function destroy(Request $request)
     {
-        if(\Auth::user()->can('Edit Expense Type'))
-        {
-            if($expensetype->created_by == \Auth::user()->creatorId())
-            {
-
-                return view('expensetype.edit', compact('expensetype'));
-            }
-            else
-            {
-                return response()->json(['error' => __('Permission denied.')], 401);
-            }
-        }
-        else
-        {
-            return response()->json(['error' => __('Permission denied.')], 401);
-        }
-    }
-
-    public function update(Request $request, ExpenseType $expensetype)
-    {
-        if(\Auth::user()->can('Edit Expense Type'))
-        {
-            if($expensetype->created_by == \Auth::user()->creatorId())
-            {
-                $validator = \Validator::make(
-                    $request->all(), [
-                                       'name' => 'required',
-
-                                   ]
-                );
-
-                if($validator->fails())
-                {
-                    $messages = $validator->getMessageBag();
-
-                    return redirect()->back()->with('error', $messages->first());
-                }
-
-                $expensetype->name = $request->name;
-                $expensetype->save();
-
-                return redirect()->route('expensetype.index')->with('success', __('ExpenseType successfully updated.'));
-            }
-            else
-            {
-                return redirect()->back()->with('error', __('Permission denied.'));
-            }
-        }
-        else
-        {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
-    }
-
-    public function destroy(ExpenseType $expensetype)
-    {
-        if(\Auth::user()->can('Delete Expense Type'))
-        {
-            if($expensetype->created_by == \Auth::user()->creatorId())
-            {
-                $expensetype->delete();
-
-                return redirect()->route('expensetype.index')->with('success', __('ExpenseType successfully deleted.'));
-            }
-            else
-            {
-                return redirect()->back()->with('error', __('Permission denied.'));
-            }
-        }
-        else
-        {
-            return redirect()->back()->with('error', __('Permission denied.'));
-        }
+        ExpenseType::find($request->id)->delete();
+        return response()->json(['success' => 'Account category deleted']);
     }
 }
